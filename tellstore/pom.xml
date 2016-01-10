@@ -10,7 +10,7 @@
     <relativePath>../binding-parent</relativePath>
   </parent>
 
-  <artifactId>tellstore</artifactId>
+  <artifactId>tellstore-binding</artifactId>
   <name>Tell Binding</name>
   <packaging>jar</packaging>
 
