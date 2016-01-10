@@ -33,7 +33,7 @@ public class TellStore extends DB {
     SCAN = toLittleEndian(2);
     UPDATE = toLittleEndian(3);
     INSERT = toLittleEndian(4);
-    DELETE = toLittleEndian(1);
+    DELETE = toLittleEndian(5);
   }
 
   Socket clientSocket;
