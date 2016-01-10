@@ -116,7 +116,7 @@ LICENSE file.
     <!--<module>hypertable</module>-->
     <!--<module>infinispan</module>-->
     <!--<module>jdbc</module>-->
-    <!--<module>kudu</module>-->
+    <module>kudu</module>
     <!--<module>mapkeeper</module>-->
     <!--<module>memcached</module>-->
     <!--<module>mongodb</module>-->

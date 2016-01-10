@@ -63,7 +63,7 @@ public class TellStore extends DB {
     }
   }
 
-  private void writeString(String str) throws IOException {
+  private void writeString(OutputStream out, String str) throws IOException {
     out.write(toLittleEndian(str.length()));
     out.write(str.getBytes(CHARSET));
   }
@@ -89,20 +89,20 @@ public class TellStore extends DB {
     return new String(str, CHARSET);
   }
 
-  private void writeMap(Map<String, ByteIterator> map) throws IOException {
+  private void writeMap(OutputStream out, Map<String, ByteIterator> map) throws IOException {
     out.write(toLittleEndian(map.size()));
     for (Map.Entry<String, ByteIterator> entry : map.entrySet()) {
-      writeString(entry.getKey());
+      writeString(out, entry.getKey());
       byte[] bytes = entry.getKey().getBytes();
       out.write(toLittleEndian(bytes.length));
       out.write(bytes);
     }
   }
 
-  private void writeSet(Set<String> set) throws IOException {
+  private void writeSet(OutputStream out, Set<String> set) throws IOException {
     out.write(toLittleEndian(set.size()));
     for (String str : set) {
-      writeString(str);
+      writeString(out, str);
     }
   }
 
@@ -149,10 +149,14 @@ public class TellStore extends DB {
   @Override
   public final Status read(String table, String key, Set<String> fields, HashMap<String, ByteIterator> result) {
     try {
-      out.write(READ);
-      writeString(table);
-      writeString(key);
-      writeSet(fields);
+      ByteArrayOutputStream resStream = new ByteArrayOutputStream();
+      resStream.write(READ);
+      writeString(resStream, table);
+      writeString(resStream, key);
+      writeSet(resStream, fields);
+      byte[] req = resStream.toByteArray();
+      out.write(toLittleEndian(req.length));
+      out.write(req);
       out.flush();
       return readMap(result);
     } catch (IOException e) {
@@ -173,10 +177,14 @@ public class TellStore extends DB {
 
   private Status generalUpdate(byte[] op, String table, String key, HashMap<String, ByteIterator> values) {
     try {
-      out.write(op);
-      writeString(table);
-      writeString(key);
-      writeMap(values);
+      ByteArrayOutputStream resStream = new ByteArrayOutputStream();
+      resStream.write(op);
+      writeString(resStream, table);
+      writeString(resStream, key);
+      writeMap(resStream, values);
+      byte[] req = resStream.toByteArray();
+      out.write(toLittleEndian(req.length));
+      out.write(req);
       out.flush();
       return readStatus();
     } catch (IOException e) {
@@ -193,9 +201,13 @@ public class TellStore extends DB {
   @Override
   public final Status delete(String table, String key) {
     try {
-      out.write(DELETE);
-      writeString(table);
-      writeString(key);
+      ByteArrayOutputStream resStream = new ByteArrayOutputStream();
+      resStream.write(DELETE);
+      writeString(resStream, table);
+      writeString(resStream, key);
+      byte[] req = resStream.toByteArray();
+      out.write(toLittleEndian(req.length));
+      out.write(req);
       out.flush();
       return readStatus();
     } catch (IOException e) {
