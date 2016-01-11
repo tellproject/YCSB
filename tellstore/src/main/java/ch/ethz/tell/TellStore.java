@@ -68,20 +68,12 @@ public class TellStore extends DB {
     out.write(str.getBytes(CHARSET));
   }
 
-  public static int byteArrayToInt(byte[] b)
-  {
-    return b[3] & 0xFF |
-      (b[2] & 0xFF) << 8 |
-      (b[1] & 0xFF) << 16 |
-      (b[0] & 0xFF) << 24;
-  }
-
   private int readInt() throws IOException {
     byte[] result = new byte[4];
     if (in.read(result) != 4) {
       throw new RuntimeException();
     }
-    return result[0] | (result[1] << 8) | (result[2] << 16) | (result[3] << 24);
+    return (result[0] & 0xFF) | ((result[1] & 0xFF) << 8) | ((result[2] & 0xFF) << 16) | ((result[3] & 0xFF) << 24);
   }
 
   private String readString() throws IOException {
@@ -136,7 +128,6 @@ public class TellStore extends DB {
   }
 
   ByteIterator readByteIterator() throws IOException {
-    int lenghth = readInt();
     byte[] res = readByteArray();
     return new ByteArrayByteIterator(res);
   }
