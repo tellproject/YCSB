@@ -138,7 +138,6 @@ public class TellStore extends DB {
   }
 
   private Status readMap(HashMap<String, ByteIterator> result) throws IOException {
-    byte[] arr = new byte[1024];
     int length = readInt();
     for (int i = 0; i < length; ++i) {
       result.put(readString(), readByteIterator());
