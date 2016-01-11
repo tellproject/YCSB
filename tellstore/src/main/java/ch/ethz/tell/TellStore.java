@@ -147,6 +147,9 @@ public class TellStore extends DB {
 
   @Override
   public final Status read(String table, String key, Set<String> fields, HashMap<String, ByteIterator> result) {
+    if (result == null || fields == null) {
+      return Status.OK;
+    }
     try {
       ByteArrayOutputStream resStream = new ByteArrayOutputStream();
       resStream.write(READ);
@@ -171,7 +174,7 @@ public class TellStore extends DB {
 
   @Override
   public final Status update(String table, String key, HashMap<String, ByteIterator> values) {
-    return generalUpdate(INSERT, table, key, values);
+    return generalUpdate(UPDATE, table, key, values);
   }
 
   private Status generalUpdate(byte[] op, String table, String key, HashMap<String, ByteIterator> values) {
@@ -194,7 +197,7 @@ public class TellStore extends DB {
 
   @Override
   public final Status insert(String table, String key, HashMap<String, ByteIterator> values) {
-    return generalUpdate(UPDATE, table, key, values);
+    return generalUpdate(INSERT, table, key, values);
   }
 
   @Override
