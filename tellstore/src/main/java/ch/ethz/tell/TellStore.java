@@ -70,7 +70,7 @@ public class TellStore extends DB {
 
   public static int byteArrayToInt(byte[] b)
   {
-    return   b[3] & 0xFF |
+    return b[3] & 0xFF |
       (b[2] & 0xFF) << 8 |
       (b[1] & 0xFF) << 16 |
       (b[0] & 0xFF) << 24;
@@ -81,7 +81,7 @@ public class TellStore extends DB {
     if (in.read(result) != 4) {
       throw new RuntimeException();
     }
-    return byteArrayToInt(result);
+    return result[0] | (result[1] << 8) | (result[2] << 16) | (result[3] << 24);
   }
 
   private String readString() throws IOException {
