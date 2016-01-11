@@ -102,6 +102,7 @@ public class TellStore extends DB {
   private void writeSet(OutputStream out, Set<String> set) throws IOException {
     if (set == null) {
       out.write(toLittleEndian(0));
+      return;
     }
     out.write(toLittleEndian(set.size()));
     for (String str : set) {
