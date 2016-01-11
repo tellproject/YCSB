@@ -100,6 +100,9 @@ public class TellStore extends DB {
   }
 
   private void writeSet(OutputStream out, Set<String> set) throws IOException {
+    if (set == null) {
+      out.write(toLittleEndian(0));
+    }
     out.write(toLittleEndian(set.size()));
     for (String str : set) {
       writeString(out, str);
@@ -147,9 +150,6 @@ public class TellStore extends DB {
 
   @Override
   public final Status read(String table, String key, Set<String> fields, HashMap<String, ByteIterator> result) {
-    if (result == null || fields == null) {
-      return Status.OK;
-    }
     try {
       ByteArrayOutputStream resStream = new ByteArrayOutputStream();
       resStream.write(READ);
