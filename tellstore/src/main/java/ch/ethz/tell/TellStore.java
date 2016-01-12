@@ -11,15 +11,18 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class TellStore extends DB {
 
-  static byte[] READ;
-  static byte[] SCAN;
-  static byte[] UPDATE;
-  static byte[] INSERT;
-  static byte[] DELETE;
-  static Charset CHARSET = Charset.forName("UTF-8");
+  static private byte[] READ;
+  static private byte[] SCAN;
+  static private byte[] UPDATE;
+  static private byte[] INSERT;
+  static private byte[] DELETE;
+  static private Charset CHARSET = Charset.forName("UTF-8");
+  static private AtomicInteger mCounter = new AtomicInteger(0);
 
   static byte[] toLittleEndian(int value) {
     ByteBuffer bb = ByteBuffer.allocate(4);
@@ -43,10 +46,12 @@ public class TellStore extends DB {
   @Override
   public final void init() {
     Properties props = getProperties();
-    String host = props.getProperty("ycsb-tell.server", "localhost");
-    String port = props.getProperty("ycsb-tell.server-port", "8713");
+    String hosts = props.getProperty("ycsb-tell.servers", "");
+    String[] hostList = hosts.split(";");
+    String host = hostList[mCounter.getAndIncrement() % hosts.length()];
     try {
-      clientSocket = new Socket(host, Integer.parseInt(port));
+      String[] hostPort = host.split(":");
+      clientSocket = new Socket(hostPort[0], Integer.parseInt(hostPort[1]));
       out = new BufferedOutputStream(clientSocket.getOutputStream());
       in = new BufferedInputStream(clientSocket.getInputStream());
     } catch (IOException e) {
