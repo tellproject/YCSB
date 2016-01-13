@@ -48,7 +48,7 @@ public class TellStore extends DB {
     Properties props = getProperties();
     String hosts = props.getProperty("ycsb-tell.servers", "");
     String[] hostList = hosts.split(";");
-    String host = hostList[mCounter.getAndIncrement() % hosts.length()];
+    String host = hostList[mCounter.getAndIncrement() % hostList.length];
     try {
       String[] hostPort = host.split(":");
       clientSocket = new Socket(hostPort[0], Integer.parseInt(hostPort[1]));
